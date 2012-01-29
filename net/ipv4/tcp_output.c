@@ -229,13 +229,10 @@ void tcp_select_initial_window(int __space, __u32 mss,
 	 * will be satisfied with 2.
 	 */
 	if (mss > (1 << *rcv_wscale)) {
-		int init_cwnd = 4;
-		if (mss > 1460 * 3)
-			init_cwnd = 2;
-		else if (mss > 1460)
-			init_cwnd = 3;
-		if (*rcv_wnd > init_cwnd * mss)
-			*rcv_wnd = init_cwnd * mss;
+		int init_cwnd = TCP_DEFAULT_INIT_RCVWND;
+		if (mss > 1460)
+			init_cwnd = 
+			max_t(u32, (1460 * TCP_DEFAULT_INIT_RCVWND) / mss, 2);
 	}
 
 	/* Set the clamp no higher than max representable value */
